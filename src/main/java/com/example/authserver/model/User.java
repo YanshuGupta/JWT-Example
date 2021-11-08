@@ -1,12 +1,13 @@
 package com.example.authserver.model;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,9 +25,18 @@ public class User {
 	private String password;
 
 	@Id
-	private String username;
+	@Email
+	private String email;
+	
+	@NotNull
+	@Size(min=3)
+	private String name;
 
-	private Set<String> authorities;
+	@NotNull
+	@Size(min=3)
+	private String org;
+
+	private Set<String> role;
 
 	private boolean accountNonExpired;
 
@@ -39,8 +49,8 @@ public class User {
 	/**
 	 * Calls the more complex constructor with all boolean arguments set to {@code true}.
 	 */
-	public User(String username, String password, Set<String> authorities) {
-		this(username, password, true, true, true, true, authorities);
+	public User(String email,  String password, String name, String org, Set<String> role) {
+		this(email, password, name, org, true, true, true, true, role);
 	}
 
 	public User() {
@@ -50,7 +60,7 @@ public class User {
 	/**
 	 * Construct the <code>User</code> with the details required by
 	 * {@link org.springframework.security.authentication.dao.DaoAuthenticationProvider}.
-	 * @param username the username presented to the
+	 * @param email the email presented to the
 	 * <code>DaoAuthenticationProvider</code>
 	 * @param password the password that should be presented to the
 	 * <code>DaoAuthenticationProvider</code>
@@ -59,27 +69,43 @@ public class User {
 	 * @param credentialsNonExpired set to <code>true</code> if the credentials have not
 	 * expired
 	 * @param accountNonLocked set to <code>true</code> if the account is not locked
-	 * @param authorities the authorities that should be granted to the caller if they
-	 * presented the correct username and password and the user is enabled. Not null.
+	 * @param role the role that should be granted to the caller if they
+	 * presented the correct email and password and the user is enabled. Not null.
 	 * @throws IllegalArgumentException if a <code>null</code> value was passed either as
 	 * a parameter or as an element in the <code>GrantedAuthority</code> collection
 	 */
-	public User(String username, String password, boolean enabled, boolean accountNonExpired,
+	public User(String email, String password, String name, String org, boolean enabled, boolean accountNonExpired,
 			boolean credentialsNonExpired, boolean accountNonLocked,
-			Set<String> authorities) {
-		Assert.isTrue(username != null && !"".equals(username) && password != null,
+			Set<String> role) {
+		Assert.isTrue(email != null && !"".equals(email) && password != null,
 				"Cannot pass null or empty values to constructor");
-		this.username = username;
+		this.email = email;
 		this.password = password;
 		this.enabled = enabled;
 		this.accountNonExpired = accountNonExpired;
 		this.credentialsNonExpired = credentialsNonExpired;
 		this.accountNonLocked = accountNonLocked;
-		this.authorities = authorities;
+		this.role = role;
 	}
 
-	public Set<String> getAuthorities() {
-		return this.authorities;
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getOrg() {
+		return org;
+	}
+
+	public void setOrg(String org) {
+		this.org = org;
+	}
+
+	public Set<String> getRole() {
+		return this.role;
 	}
 
 	public String getPassword() {
@@ -90,8 +116,8 @@ public class User {
 		this.password = password;
 	}
 
-	public String getUsername() {
-		return this.username;
+	public String getEmail() {
+		return this.email;
 	}
 
 	public boolean isEnabled() {
@@ -116,38 +142,38 @@ public class User {
 
 	/**
 	 * Returns {@code true} if the supplied object is a {@code User} instance with the
-	 * same {@code username} value.
+	 * same {@code email} value.
 	 * <p>
-	 * In other words, the objects are equal if they have the same username, representing
+	 * In other words, the objects are equal if they have the same email, representing
 	 * the same principal.
 	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof User) {
-			return this.username.equals(((User) obj).username);
+			return this.email.equals(((User) obj).email);
 		}
 		return false;
 	}
 
 	/**
-	 * Returns the hashcode of the {@code username}.
+	 * Returns the hashcode of the {@code email}.
 	 */
 	@Override
 	public int hashCode() {
-		return this.username.hashCode();
+		return this.email.hashCode();
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getClass().getName()).append(" [");
-		sb.append("Username=").append(this.username).append(", ");
+		sb.append("email=").append(this.email).append(", ");
 		sb.append("Password=[PROTECTED], ");
 		sb.append("Enabled=").append(this.enabled).append(", ");
 		sb.append("AccountNonExpired=").append(this.accountNonExpired).append(", ");
 		sb.append("credentialsNonExpired=").append(this.credentialsNonExpired).append(", ");
 		sb.append("AccountNonLocked=").append(this.accountNonLocked).append(", ");
-		sb.append("Granted Authorities=").append(this.authorities).append("]");
+		sb.append("Granted role=").append(this.role).append("]");
 		return sb.toString();
 	}
 

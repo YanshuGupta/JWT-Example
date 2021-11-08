@@ -1,15 +1,9 @@
-#--- 
-#security: 
-#  oauth2:
-##    resource:
-##      filter-order: 3
-#    client: 
-#      client-id: first-client
-#      client-secret: noonewilleverguess
-#  spring.main.allow-bean-definition-overriding=true
 spring:
-  main:
-    allow-bean-definition-overriding: true
+  profiles:
+    active:
+    - default
+  application:
+    name: Dev-Portal
   data:
     mongodb:
       database: mydb
@@ -18,5 +12,6 @@ spring:
 jwt:
   secret: javainuse
 
-#security.oauth2.client.client-id=first-client
-#security.oauth2.client.client-secret=noonewilleverguess
+      
+server:
+  port: 8080

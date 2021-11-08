@@ -29,7 +29,7 @@ public class JWTUserDetailsService implements UserDetailsService {
 		if(user.isEmpty()) {
 			throw new UsernameNotFoundException("Username Not Found");
 		}
-		return new org.springframework.security.core.userdetails.User(user.get().getUsername(), user.get().getPassword(), getAuthorities(user.get().getAuthorities()));
+		return new org.springframework.security.core.userdetails.User(user.get().getEmail(), user.get().getPassword(), getAuthorities(user.get().getRole()));
 	}
 	
 	private Collection<? extends GrantedAuthority> getAuthorities(Set<String> roles) {

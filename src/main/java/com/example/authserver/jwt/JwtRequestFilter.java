@@ -50,8 +50,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 				logger.error("Invalid Token");
 //				throw new CustomAuthenticationException("");
 			}
-		} else {
-			logger.error("JWT Token does not begin with Bearer String");
 		}
 
 		// Once we get the token validate it.
