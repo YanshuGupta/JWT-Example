@@ -8,6 +8,15 @@ spring:
     mongodb:
       database: mydb
       uri: mongodb://yanshu:root@localhost:27017/mydb
+      
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: 65b52edbb365b7862b2e
+            clientSecret: 342ea309592352da248c9877436f348ac3dcebdb
+            redirect-uri: http://localhost:8080/login/oauth/authorize
 
 jwt:
   secret: javainuse
@@ -15,3 +24,5 @@ jwt:
       
 server:
   port: 8080
+
+  

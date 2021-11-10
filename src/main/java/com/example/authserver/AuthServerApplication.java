@@ -4,10 +4,17 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.authserver.model.JwtRequestSSO;
+import com.example.authserver.model.JwtResponseSSO;
 
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -34,13 +41,7 @@ public class AuthServerApplication {
 	}
 
 	@GetMapping("/")
-	public String index(@AuthenticationPrincipal OAuth2User principal) {
-		System.out.println(principal.getAttribute("name").toString());
+	public String index() {
 		return "redirect:swagger-ui.html";
 	}
-
-//	@GetMapping("/token")
-//	public ResponseEntity<String> token(@RegisteredOAuth2AuthorizedClient("github") OAuth2AuthorizedClient client) {
-//		return ResponseEntity.ok(client.getAccessToken().getTokenValue());
-//	}
 }

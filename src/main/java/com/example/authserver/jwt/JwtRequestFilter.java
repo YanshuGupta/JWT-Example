@@ -7,15 +7,21 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.bson.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.example.authserver.exception.CustomAuthenticationException;
 import com.example.authserver.service.JWTUserDetailsService;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -33,7 +39,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws ServletException, IOException {
 		final String requestTokenHeader = request.getHeader("Authorization");
+		if(requestTokenHeader != null && requestTokenHeader.contains("token")) {
+			RestTemplate restTemplate = new RestTemplate();
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.set("Authorization", requestTokenHeader.substring(requestTokenHeader.indexOf(' ')+1));
+			HttpEntity httpEntity = new HttpEntity(headers);
 
+			ResponseEntity<String> user = 
+					restTemplate.exchange("https://api.github.com/user", HttpMethod.GET, httpEntity, String.class);
+			JsonObject json = new JsonObject(user.getBody()); 
+			
+			System.out.println(json);
+		}
 		String username = null;
 		String jwtToken = null;
 		// JWT Token is in the form "Bearer token". Remove Bearer word and get
@@ -48,7 +66,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 				logger.error("JWT Token has expired");
 			} catch (Exception e) {
 				logger.error("Invalid Token");
-//				throw new CustomAuthenticationException("");
 			}
 		}
 
